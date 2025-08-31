@@ -1,17 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import prefUtils from "@/utils/prefUtils";
-import FlyoutMenu from "@/components/menu/FlyoutMenu";
-import { useAuth } from "@/components/oauth/AuthContext";
+import prefUtils from "../../utils/prefUtils";
+import FlyoutMenu from "../../components/menu/FlyoutMenu";
+import { useAuth } from "../../components/oauth/AuthContext";
 
 interface CalendarItem {
   id: string;
   summary: string;
-}
-
-interface CalendarColorPrefs {
-  [calendarId: string]: string; // hex color
 }
 
 const PreferencesPage: React.FC = () => {
@@ -43,13 +39,16 @@ const PreferencesPage: React.FC = () => {
 
   // Load prefs from localStorage
   useEffect(() => {
-    setPrefs(prefUtils.getAllCalendarColors());
+    if (typeof window === "undefined") {
+      return;
+    }
+    setPrefs(prefUtils.getAllCalendarColors(window));
   }, []);
 
-  const handleColorChange = (summary: string, color: string) => {
-    prefUtils.setCalendarColor(summary, color);
-    setPrefs(prefUtils.getAllCalendarColors());
-  };
+  // const handleColorChange = (summary: string, color: string) => {
+  //   prefUtils.setCalendarColor(summary, color);
+  //   setPrefs(prefUtils.getAllCalendarColors());
+  // };
 
   return (
     <>
@@ -79,9 +78,9 @@ const PreferencesPage: React.FC = () => {
               <li className="flex items-center" key={cal.id}>
                 <input
                   type="color"
-                  value={prefUtils.getCalendarColor(cal.summary) || "#4fb9af"}
+                  value={prefUtils.getCalendarColor(window, cal.summary) || "#4fb9af"}
                   onChange={(e) => {
-                    prefUtils.setCalendarColor(cal.summary, e.target.value);
+                    prefUtils.setCalendarColor(window, cal.summary, e.target.value);
                     setPrefs({ ...prefs, [cal.summary]: e.target.value });
                   }}
                   className="w-6 rounded-full bg-transparent cursor-pointer"

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuth } from "@/components/oauth/AuthContext";
-import Calendar from "@/components/calendar/calendar";
-import FlyoutMenu from "@/components/menu/FlyoutMenu";
+import { useAuth } from "../components/oauth/AuthContext";
+import Calendar from "../components/calendar/calendar";
+import FlyoutMenu from "../components/menu/FlyoutMenu";
 
 const HomeContent = () => {
   const { loggedIn } = useAuth();
@@ -52,7 +52,7 @@ const HomeContent = () => {
     };
   }, []);
 
-  const title = process.env.APPLICATION_TITLE;
+  const title = process.env.NEXT_PUBLIC_APPLICATION_TITLE;
 
   return (
     <>
@@ -69,14 +69,13 @@ const HomeContent = () => {
             />
           </div>
           <h1 id="main-header-title" className="text-4xl flex-1 text-center">
-            Darling Home Calendar
+            {title}
           </h1>
         </div>
       </header>
       <main className="m-auto w-13/20 py-5">
         <Calendar
           selectedCalendars={selectedCalendars}
-          setSelectedCalendars={setSelectedCalendars}
         />
       </main>
       <footer className="w-full bottom-0 bg-gray-200 text-gray-1000 text-center p-10"></footer>

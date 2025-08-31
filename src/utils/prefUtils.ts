@@ -4,10 +4,7 @@ type CalendarColorPrefs = {
   [calendarSummary: string]: string; // hex color
 };
 
-const getAllCalendarColors = (): CalendarColorPrefs => {
-  if (typeof window === "undefined") {
-    return {};
-  }
+const getAllCalendarColors = (window: Window): CalendarColorPrefs => {
   try {
     const raw = window.localStorage.getItem(CALENDAR_COLOR_LOCAL_KEY);
     return raw ? JSON.parse(raw) : {};
@@ -16,8 +13,8 @@ const getAllCalendarColors = (): CalendarColorPrefs => {
   }
 }
 
-const getCalendarColor = (summary: string): string => {
-  const prefs = getAllCalendarColors();
+const getCalendarColor = (window: Window, summary: string): string => {
+  const prefs = getAllCalendarColors(window);
   const color = prefs[summary];
   if (typeof color === "string" && /^#[0-9a-fA-F]{6}$/.test(color)) {
     return color;
@@ -26,11 +23,8 @@ const getCalendarColor = (summary: string): string => {
   }
 }
 
-const setCalendarColor = (summary: string, color: string) => {
-  if (typeof window === "undefined") {
-    return;
-  }
-  const prefs = getAllCalendarColors();
+const setCalendarColor = (window: Window, summary: string, color: string) => {
+  const prefs = getAllCalendarColors(window);
   prefs[summary] = color;
   window.localStorage.setItem(CALENDAR_COLOR_LOCAL_KEY, JSON.stringify(prefs));
 }

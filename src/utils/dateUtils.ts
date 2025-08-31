@@ -73,7 +73,7 @@ const getDaysInMonth = (date: Date): number => {
 };
 
 const getMonthDays = (date: Date): CalendarDate[] => {
-  let days: CalendarDate[] = [];
+  const days: CalendarDate[] = [];
   for (let i = 1; i <= getDaysInMonth(date); i++) {
     const thisDay = new Date(date.getFullYear(), date.getMonth(), i);
     const calendarDate: CalendarDate = {
@@ -104,7 +104,7 @@ const getTimeDisplay = (eventTimes: TimeRange) => {
     return "";
   }
 
-  let display = getLocalTime(eventTimes.start);
+  const display = getLocalTime(eventTimes.start);
   if (eventTimes.end === null) {
     return display;
   }

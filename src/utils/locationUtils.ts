@@ -14,7 +14,7 @@ const parseGoogleEventLocation = (event: any): Location | null => {
   }
   // Expected format:
   // "Goldfish Swim School - Bedford, 5 Colby Ct Suite 5, Bedford, NH 03110, USA"
-  let locStr = event.location.trim();
+  const locStr = event.location.trim();
   // Split by commas
   const parts = locStr.split(",").map((s: string) => s.trim());
   // Name is always first part (may contain dashes)

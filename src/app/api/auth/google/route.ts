@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { google } from "googleapis";
-import httpUtils from "@/utils/httpUtils";
+import httpUtils from "../../../../utils/httpUtils";
 
 export async function GET(req: NextRequest) {
   const oauth2Client = new google.auth.OAuth2(

@@ -1,6 +1,6 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
-import { useCalendarSelection } from "./CalendarSelectionContext";
 
 interface CalendarItem {
   id: string;

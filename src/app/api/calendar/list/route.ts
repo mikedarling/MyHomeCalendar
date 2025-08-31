@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { google } from "googleapis";
 import { cookies } from "next/headers";
-import httpUtils from "@/utils/httpUtils";
+import httpUtils from "../../../../utils/httpUtils";
 
 export async function GET(req: NextRequest) {
   const cookieStore = await cookies();

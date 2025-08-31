@@ -1,7 +1,7 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, useMemo } from "react";
 import CalendarEventBox from "./CalendarEventBox";
-import dateUtils from "@/utils/dateUtils";
-import themeUtils from "@/utils/themeUtils";
+import dateUtils from "../../utils/dateUtils";
+import themeUtils from "../../utils/themeUtils";
 
 interface CalendarWeekProps {
   calendarIds: string[];
@@ -37,7 +37,7 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
 }) => {
   const [viewedDate, setViewedDate] = useState(selectedDate);
   const [events, setEvents] = useState<any[]>([]);
-  const startOfWeek = getStartOfWeek(viewedDate);
+  const startOfWeek = useMemo(() => getStartOfWeek(viewedDate), [viewedDate]);
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(startOfWeek);
     d.setDate(startOfWeek.getDate() + i);
@@ -76,7 +76,7 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
       }
     };
     fetchEvents();
-  }, [calendarIds, startOfWeek.getTime()]);
+  }, [calendarIds, startOfWeek]);
 
   // Helper to get events for a given day
   function getEventsForDay(day: Date) {
@@ -125,8 +125,8 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
       </div>
       {/* Header Row for Dates */}
       <div className="flex ml-[70px] mb-0">
-        {days.map((date, dayIdx) => (
-          <div key={date.toISOString()} className={ themeUtils.WEEKDAY_HEADER + " flex-1 border-r border-white" } >
+        {days.map((date, dateIdx) => (
+          <div key={dateIdx} className={ themeUtils.WEEKDAY_HEADER + " flex-1 border-r border-white" } >
             {date.toLocaleDateString(undefined, {
               weekday: "short",
               month: "short",
@@ -139,9 +139,9 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
       <div className="flex border border-gray-300 min-h-[600px]">
         {/* Time column */}
         <div className="w-[70px] border-r border-gray-200 bg-gray-50 flex flex-col">
-          {timeSlots.map((slot, idx) => (
+          {timeSlots.map((slot, slotIdx) => (
             <div
-              key={slot.label}
+              key={slotIdx}
               className="h-6 text-[11px] text-gray-500 flex items-center justify-center text-center pr-0"
             >
               {slot.label}
@@ -149,15 +149,15 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
           ))}
         </div>
         {/* Days columns */}
-        {days.map((date, dayIdx) => {
+        {days.map((date, dateIdx) => {
           const events = getEventsForDay(date);
           // For each slot, find events that start in this slot
           return (
             <div
-              key={date.toISOString()}
+              key={dateIdx}
               className={
                 "flex-1 flex flex-col relative " +
-                (dayIdx < 6 ? "border-r border-gray-200" : "")
+                (dateIdx < 6 ? "border-r border-gray-200" : "")
               }
             >
               {timeSlots.map((slot, slotIdx) => {
@@ -173,7 +173,7 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
                 });
                 return (
                   <div
-                    key={slot.label}
+                    key={slotIdx}
                     className={
                       "h-6 border-b border-gray-100 cursor-pointer relative overflow-visible " +
                       (date.toDateString() === viewedDate.toDateString() &&
@@ -192,13 +192,18 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
                       // Calculate how many slots this event should span (precise, including partial slots)
                       const eventDuration = dateUtils.getEventDuration(event);
                       const height = (eventDuration / 30) * 24; // 24px per half-hour
+                      const evStyle = {
+                        height: `${height}px`
+                      };
+                      const evClasses = ["absolute", "z-10"];
+                      const overlaps = dateUtils.getOverlappingEvents(event, events);
                       return (
                         <CalendarEventBox
                           key={event.id}
                           event={event}
-                          style={{ height: `${height}px` }}
-                          classes={["absolute", "z-10"]}
-                          overlappingEvents={dateUtils.getOverlappingEvents(event, events)}
+                          style={evStyle}
+                          classes={evClasses}
+                          overlappingEvents={overlaps}
                         />
                       );
                     })}

@@ -1,7 +1,9 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import dateUtils from "@/utils/dateUtils";
-import locationUtils from "@/utils/locationUtils";
-import prefUtils from "@/utils/prefUtils";
+import dateUtils from "../../utils/dateUtils";
+import locationUtils from "../../utils/locationUtils";
+import prefUtils from "../../utils/prefUtils";
 
 interface CalendarEventBoxProps {
   event: any;
@@ -30,7 +32,10 @@ const CalendarEventBox: React.FC<CalendarEventBoxProps> = ({
   const eventTimes = dateUtils.parseGoogleEvent(event);
   const location = locationUtils.parseGoogleEventLocation(event);
   const getBackground = (organizer: string) => {
-    return prefUtils.getCalendarColor(organizer);
+    if (typeof window === "undefined") {
+      return "#888888";
+    }
+    return prefUtils.getCalendarColor(window, organizer);
   };
 
   let boxClasses =
@@ -39,7 +44,7 @@ const CalendarEventBox: React.FC<CalendarEventBoxProps> = ({
     boxClasses += " " + classes.join(" ");
   }
 
-  let boxStyles = (style || {});
+  const boxStyles = (style || {});
   boxStyles['background'] = getBackground(event.organizer.displayName);
   if (overlappingEvents && overlappingEvents.length > 0) {
     boxStyles['width'] = `${100.0 / (overlappingEvents.length) - 2}%`;
@@ -82,7 +87,7 @@ const CalendarEventBox: React.FC<CalendarEventBoxProps> = ({
     window.dispatchEvent(new Event("calendar-eventbox-close"));
     const rect = (e.target as HTMLElement).getBoundingClientRect();
     let x = rect.right;
-    let y = rect.top;
+    const y = rect.top;
     // If modal would overflow right, anchor to left
     if (x + MODAL_WIDTH > window.innerWidth) {
       x = rect.left - MODAL_WIDTH;

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import AuthButton from "../oauth/authbutton";
 import CalendarMultiSelect from "../calendar/CalendarMultiSelect";
+import Link from "next/link";
 
 interface FlyoutMenuProps {
   loggedIn: boolean;
@@ -48,8 +49,8 @@ const FlyoutMenu: React.FC<FlyoutMenuProps> = ({
         }}
       >
         <nav className="flex flex-col gap-2 p-4 border-b border-gray-600">
-          <a href="/" className="text-white hover:text-sky-300 font-medium">Calendar</a>
-          <a href="/preferences" className="text-white hover:text-sky-300 font-medium">Preferences</a>
+          <Link href="/" className="text-white hover:text-sky-300 font-medium">Calendar</Link>
+          <Link href="/preferences" className="text-white hover:text-sky-300 font-medium">Preferences</Link>
         </nav>
         <div className="flex justify-end p-3">
           <button

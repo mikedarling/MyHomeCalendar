@@ -1,29 +1,27 @@
 "use client"
 
 import React, { useEffect, useState } from "react";
-import dateUtils, { CalendarDate } from "@/utils/dateUtils"
+import dateUtils, { CalendarDate } from "../../utils/dateUtils"
 import CalendarEventBox from "./CalendarEventBox";
-import themeUtils from "@/utils/themeUtils";
+import themeUtils from "../../utils/themeUtils";
 
 interface CalendarMonthProps {
     selectedDate: Date,
-    onDateSelected: Function,
     calendarIds: string[];
 }
 
 const CalendarMonth: React.FC<CalendarMonthProps> = ({
     selectedDate,
-    onDateSelected,
     calendarIds
 }) => {
     const [events, setEvents] = useState<any[]>([]);
 
     // Helper functions
     const updateDays = (date: Date): CalendarDate[] => {
-        let monthDays = dateUtils.getMonthDays(date);
-        let firstWeekday = monthDays[0].dayOfWeek;
+        const monthDays = dateUtils.getMonthDays(date);
+        const firstWeekday = monthDays[0].dayOfWeek;
         for (let i = firstWeekday; i > 0; i--) {
-            let emptyNode: CalendarDate = {
+            const emptyNode: CalendarDate = {
                 monthDay: null,
                 dayOfWeek: -1
             };

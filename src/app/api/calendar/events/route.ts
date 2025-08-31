@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { google } from "googleapis";
 import { cookies } from "next/headers";
+import httpUtils from "@/utils/httpUtils";
 
 export async function GET(req: NextRequest) {
   const cookieStore = await cookies();
@@ -19,10 +20,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const scheme = process.env.HTTP_SCHEME || "http";
-  const host = process.env.HOST || "localhost";
-  const port = process.env.PORT && process.env.PORT !== "80" && process.env.PORT !== "443" ? `:${process.env.PORT}` : "";
-  const redirectUri = `${scheme}://${host}${port}${process.env.GOOGLE_REDIRECT_URI}`;
+  const redirectUri = httpUtils.gAuthRedirectUri;
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
