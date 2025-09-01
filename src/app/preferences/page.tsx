@@ -75,8 +75,7 @@ const PreferencesPage: React.FC = () => {
         ) : (
           <ul>
             {calendars.map((cal) => {
-              // Track text mode per calendar
-              const [textMode, setTextMode] = useState<'light' | 'dark'>('light');
+              const textMode = typeof window !== 'undefined' ? prefUtils.getCalendarTextMode(window, cal.summary) : 'light';
               return (
                 <li className="flex items-center" key={cal.id}>
                   <input
@@ -101,7 +100,13 @@ const PreferencesPage: React.FC = () => {
                   </span>
                   <button
                     className="ml-2 px-2 py-1 text-xs rounded border border-gray-400 bg-gray-50 hover:bg-gray-200"
-                    onClick={() => setTextMode(textMode === 'light' ? 'dark' : 'light')}
+                    onClick={() => {
+                      if (typeof window !== 'undefined') {
+                        const newMode = textMode === 'light' ? 'dark' : 'light';
+                        prefUtils.setCalendarTextMode(window, cal.summary, newMode);
+                        setPrefs({ ...prefs }); // force re-render
+                      }
+                    }}
                   >
                     {textMode === 'light' ? 'Light' : 'Dark'}
                   </button>
