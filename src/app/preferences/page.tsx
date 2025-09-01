@@ -14,7 +14,7 @@ const PreferencesPage: React.FC = () => {
   const { loggedIn } = useAuth();
   const [selectedCalendars, setSelectedCalendars] = useState<string[]>([]);
   const [calendars, setCalendars] = useState<CalendarItem[]>([]);
-  const [prefs, setPrefs] = useState<{ [calendarSummary: string]: string }>({});
+  const [prefs, setPrefs] = useState<{ [calendarSummary: string]: { color: string; textMode?: 'light' | 'dark' } }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -74,22 +74,40 @@ const PreferencesPage: React.FC = () => {
           <div>No calendars found.</div>
         ) : (
           <ul>
-            {calendars.map((cal) => (
-              <li className="flex items-center" key={cal.id}>
-                <input
-                  type="color"
-                  value={prefUtils.getCalendarColor(window, cal.summary) || "#4fb9af"}
-                  onChange={(e) => {
-                    prefUtils.setCalendarColor(window, cal.summary, e.target.value);
-                    setPrefs({ ...prefs, [cal.summary]: e.target.value });
-                  }}
-                  className="w-6 rounded-full bg-transparent cursor-pointer"
-                />
-                <span className="ml-1">
-                  {cal.summary}
-                </span>
-              </li>
-            ))}
+            {calendars.map((cal) => {
+              // Track text mode per calendar
+              const [textMode, setTextMode] = useState<'light' | 'dark'>('light');
+              return (
+                <li className="flex items-center" key={cal.id}>
+                  <input
+                    type="color"
+                    value={prefUtils.getCalendarColor(window, cal.summary) || "#4fb9af"}
+                    onChange={(e) => {
+                      prefUtils.setCalendarColor(window, cal.summary, e.target.value);
+                      setPrefs({
+                        ...prefs,
+                        [cal.summary]: {
+                          ...(prefs[cal.summary] || {}),
+                          color: e.target.value,
+                        },
+                      });
+                    }}
+                    className="w-6 rounded-full bg-transparent cursor-pointer"
+                  />
+                  <span
+                    className={`ml-1 transition-colors duration-150 ${textMode === 'light' ? 'text-gray-900' : 'text-gray-100 bg-gray-800 px-2 rounded'}`}
+                  >
+                    {cal.summary}
+                  </span>
+                  <button
+                    className="ml-2 px-2 py-1 text-xs rounded border border-gray-400 bg-gray-50 hover:bg-gray-200"
+                    onClick={() => setTextMode(textMode === 'light' ? 'dark' : 'light')}
+                  >
+                    {textMode === 'light' ? 'Light' : 'Dark'}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         )}
       </main>

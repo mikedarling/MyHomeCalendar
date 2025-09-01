@@ -43,6 +43,14 @@ const CalendarEventBox: React.FC<CalendarEventBoxProps> = ({
   if (classes) {
     boxClasses += " " + classes.join(" ");
   }
+  // Get text mode and append class if dark
+  let textMode: 'light' | 'dark' = 'light';
+  if (typeof window !== 'undefined' && event.organizer?.displayName) {
+    textMode = prefUtils.getCalendarTextMode(window, event.organizer.displayName);
+    if (textMode === 'dark') {
+      boxClasses += ' txt-grey-800';
+    }
+  }
 
   const boxStyles = (style || {});
   boxStyles['background'] = getBackground(event.organizer.displayName);
