@@ -5,6 +5,7 @@ export default function ScreensaverOverlay() {
   const [active, setActive] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [current, setCurrent] = useState(0);
+  const [fade, setFade] = useState(true);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch Met Museum images
@@ -30,11 +31,15 @@ export default function ScreensaverOverlay() {
     }
   }, [active, images.length]);
 
-  // Cycle images every 10s
+  // Cycle images every 10s with fade
   useEffect(() => {
     if (!active || images.length === 0) return;
     const interval = setInterval(() => {
-      setCurrent((c) => (c + 1) % images.length);
+      setFade(false);
+      setTimeout(() => {
+        setCurrent((c) => (c + 1) % images.length);
+        setFade(true);
+      }, 600); // fade out duration
     }, 10000);
     return () => clearInterval(interval);
   }, [active, images]);
@@ -76,6 +81,7 @@ export default function ScreensaverOverlay() {
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "column",
+        cursor: "none",
       }}
       onClick={() => setActive(false)}
     >
@@ -84,9 +90,11 @@ export default function ScreensaverOverlay() {
         alt="Met Museum Art"
         style={{
           maxWidth: "80vw",
-          maxHeight: "80vh",
-          borderRadius: "16px",
+          maxHeight: "100vh",
+          borderRadius: "8px",
           boxShadow: "0 0 32px #000",
+          opacity: fade ? 1 : 0,
+          transition: "opacity 0.6s cubic-bezier(.4,0,.2,1)",
         }}
       />
       <div style={{ color: "#fff", marginTop: 24, fontSize: 18 }}>
