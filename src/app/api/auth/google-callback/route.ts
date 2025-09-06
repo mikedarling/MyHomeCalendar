@@ -12,11 +12,12 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  const redirectUri = httpUtils.gAuthRedirectUri(req.url);
 
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    httpUtils.gAuthRedirectUri,
+    redirectUri,
   );
 
   try {
@@ -25,22 +26,19 @@ export async function GET(req: NextRequest) {
     const oauth2 = google.oauth2({ version: "v2", auth: oauth2Client });
     const userInfo = await oauth2.userinfo.get();
 
-    // Prepare Set-Cookie headers
-    // Use env vars for host, port, and http_scheme
-    const host = process.env.HOST || "localhost";
-    const port = process.env.PORT || "3000";
-    const scheme = process.env.HTTP_SCHEME || "http";
-    const domain =
-      host + (port && port !== "80" && port !== "443" ? `:${port}` : "");
+    const baseUri = httpUtils.baseUri(req.url);
+    const host = httpUtils.host(req.url);
 
+    // Prepare Set-Cookie headers
     const cookieHeaders = [
       `google_tokens=${encodeURIComponent(JSON.stringify(tokens))}; Path=/; SameSite=Lax; Domain=${host}`,
       `google_user=${encodeURIComponent(JSON.stringify(userInfo.data))}; Path=/; SameSite=Lax; Domain=${host}`,
     ];
 
+    console.log("Set-Cookie headers:", cookieHeaders);
+
     // Redirect to home page after successful login, with cookies set
-    const redirectUrl = `${scheme}://${domain}/`;
-    const response = NextResponse.redirect(redirectUrl);
+    const response = NextResponse.redirect(baseUri);
     cookieHeaders.forEach((header) =>
       response.headers.append("Set-Cookie", header),
     );

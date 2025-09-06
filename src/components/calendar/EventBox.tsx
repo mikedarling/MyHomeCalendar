@@ -15,7 +15,7 @@ interface CalendarEventBoxProps {
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
-const CalendarEventBox: React.FC<CalendarEventBoxProps> = ({
+const EventBox: React.FC<CalendarEventBoxProps> = ({
   event,
   style,
   classes,
@@ -38,19 +38,18 @@ const CalendarEventBox: React.FC<CalendarEventBoxProps> = ({
     return prefUtils.getCalendarColor(window, organizer);
   };
 
-  let boxClasses =
-    "cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis text-white py-1 px-2 m-0 text-xs rounded";
+  let boxClasses = "cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis py-1 px-2 m-0 text-xs rounded";
   if (classes) {
     boxClasses += " " + classes.join(" ");
   }
-  // Get text mode and append class if dark
-  let textMode: 'light' | 'dark' = 'light';
+  let textClass = 'text-white';
   if (typeof window !== 'undefined' && event.organizer?.displayName) {
-    textMode = prefUtils.getCalendarTextMode(window, event.organizer.displayName);
+    const textMode = prefUtils.getCalendarTextMode(window, event.organizer.displayName);
     if (textMode === 'dark') {
-      boxClasses += ' txt-grey-800';
+      textClass = 'text-gray-800';
     }
   }
+  boxClasses += ` ${textClass}`;
 
   const boxStyles = (style || {});
   boxStyles['background'] = getBackground(event.organizer.displayName);
@@ -104,6 +103,8 @@ const CalendarEventBox: React.FC<CalendarEventBoxProps> = ({
     setShowModal(true);
   };
 
+  const eventStartTime = eventTimes.start?.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).replace(/ [AP]M/, "");
+
   return (
     <>
       <div
@@ -113,7 +114,7 @@ const CalendarEventBox: React.FC<CalendarEventBoxProps> = ({
         title={event.title}
         onClick={handleClick}
       >
-        {event.summary}
+        <span className="font-bold">{eventStartTime}</span> {event.summary}
       </div>
       {showModal && modalPosition && (
         <div

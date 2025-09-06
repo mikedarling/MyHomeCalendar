@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import dateUtils, { CalendarDate } from "../../utils/dateUtils"
-import CalendarEventBox from "./CalendarEventBox";
+import CalendarEventBox from "./EventBox";
 import themeUtils from "../../utils/themeUtils";
 
 interface CalendarMonthProps {

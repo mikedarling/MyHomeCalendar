@@ -1,20 +1,33 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const AuthButton: React.FC = () => {
-  const handleLogin = async () => {
-    // Fetch the Google OAuth URL from the API
-    const res = await fetch("/api/auth/google");
-    if (!res.ok) {
-      alert("Failed to get Google login URL");
-      return;
-    }
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
+  const [loginUrl, setLoginUrl] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const fetchLoginUrl = async () => {
+      // Get scheme and host from window.location
+      const res = await fetch(`/api/auth/google`);
+      if (!res.ok) {
+        setLoginUrl(null);
+        return;
+      }
+
+      const data = await res.json();
+      if (data.url) {
+        setLoginUrl(data.url);
+      }
+    };
+    
+    fetchLoginUrl();
+  }, []);
+
+  const handleLogin = () => {
+    if (loginUrl) {
+      window.location.href = loginUrl;
     } else {
-      alert("No login URL returned");
+      alert("No login URL available");
     }
   };
 
@@ -28,8 +41,10 @@ const AuthButton: React.FC = () => {
         background: "#4285F4",
         color: "white",
         border: "none",
-        cursor: "pointer",
+        cursor: loginUrl ? "pointer" : "not-allowed",
+        opacity: loginUrl ? 1 : 0.6,
       }}
+      disabled={!loginUrl}
     >
       Sign in with Google
     </button>

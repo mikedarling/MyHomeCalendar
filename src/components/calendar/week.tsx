@@ -1,5 +1,5 @@
 import { FC, useEffect, useState, useMemo } from "react";
-import CalendarEventBox from "./CalendarEventBox";
+import CalendarEventBox from "./EventBox";
 import dateUtils from "../../utils/dateUtils";
 import themeUtils from "../../utils/themeUtils";
 

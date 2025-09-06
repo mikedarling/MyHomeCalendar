@@ -20,11 +20,10 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const redirectUri = httpUtils.gAuthRedirectUri;
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    redirectUri,
+    httpUtils.gAuthRedirectUri(req.url),
   );
   oauth2Client.setCredentials(tokens);
 

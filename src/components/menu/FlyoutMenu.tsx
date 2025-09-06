@@ -1,23 +1,22 @@
 "use client";
-import React, { useState } from "react";
-import { usePathname } from "next/navigation";
-import AuthButton from "../oauth/authbutton";
-import CalendarMultiSelect from "../calendar/CalendarMultiSelect";
+
+import React, { FC, PropsWithChildren, useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import AuthButton from "@/components/oauth/AuthButton";
+import FlyoutMenuProps from "@/models/props/component/menu/FlyoutMenuProps";
 
-interface FlyoutMenuProps {
-  loggedIn: boolean;
-  selectedCalendars: string[];
-  setSelectedCalendars: (ids: string[]) => void;
-}
-
-const FlyoutMenu: React.FC<FlyoutMenuProps> = ({
+const FlyoutMenu: FC<PropsWithChildren<FlyoutMenuProps>> = ({
   loggedIn,
-  selectedCalendars,
-  setSelectedCalendars,
+  children,
 }) => {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+
+  // Close menu on navigation
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   return (
     <>
@@ -66,13 +65,8 @@ const FlyoutMenu: React.FC<FlyoutMenuProps> = ({
             <AuthButton />
           </div>
         )}
-        {loggedIn && pathname !== "/preferences" && (
-          <CalendarMultiSelect
-            loggedIn={loggedIn}
-            selected={selectedCalendars}
-            setSelected={setSelectedCalendars}
-          />
-        )}
+        {children}
+       
       </div>
       {/* Overlay */}
       {open && (

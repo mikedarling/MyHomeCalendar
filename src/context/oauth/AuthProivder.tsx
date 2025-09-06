@@ -1,21 +1,7 @@
-"use client";
+import { ReactNode, useEffect, useState } from "react";
+import AuthContext from "@/context/oauth/AuthContext";
 
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-
-interface AuthContextType {
-  loggedIn: boolean;
-  setLoggedIn: (val: boolean) => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   // Helper to check cookie
@@ -40,8 +26,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within an AuthProvider");
-  return context;
-};
+export default AuthProvider;

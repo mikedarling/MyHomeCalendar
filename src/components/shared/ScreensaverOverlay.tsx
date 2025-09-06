@@ -13,19 +13,25 @@ export default function ScreensaverOverlay() {
     async function fetchImages() {
       const res = await fetch("https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=painting");
       const data = await res.json();
-      if (data.objectIDs && data.objectIDs.length > 0) {
-        const ids = data.objectIDs.sort(() => 0.5 - Math.random()).slice(0, 10);
-        const imgUrls: string[] = [];
-        for (const id of ids) {
-          const objRes = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`);
-          const objData = await objRes.json();
-          if (objData.primaryImage) {
-            imgUrls.push(objData.primaryImage);
-          }
-        }
-        setImages(imgUrls);
+      if (!data.objectIDs || data.objectIDs.length === 0) {
+        return;
       }
+
+      const ids = data.objectIDs
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 10);
+      
+      const imgUrls: string[] = [];
+      for (const id of ids) {
+        const objRes = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`);
+        const objData = await objRes.json();
+        if (objData.primaryImage) {
+          imgUrls.push(objData.primaryImage);
+        }
+      }
+      setImages(imgUrls);
     }
+
     if (active && images.length === 0) {
       fetchImages();
     }
@@ -33,7 +39,10 @@ export default function ScreensaverOverlay() {
 
   // Cycle images every 10s with fade
   useEffect(() => {
-    if (!active || images.length === 0) return;
+    if (!active || images.length === 0) {
+      return;
+    }
+
     const interval = setInterval(() => {
       setFade(false);
       setTimeout(() => {
@@ -41,7 +50,10 @@ export default function ScreensaverOverlay() {
         setFade(true);
       }, 600); // fade out duration
     }, 10000);
-    return () => clearInterval(interval);
+
+    return () => {
+      clearInterval(interval);
+    };
   }, [active, images]);
 
   // Listen for user activity
@@ -49,57 +61,54 @@ export default function ScreensaverOverlay() {
     const resetTimer = () => {
       setActive(false);
       setCurrent(0);
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => setActive(true), 2 * 60 * 1000);
+      
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+
+      timerRef.current = setTimeout(() => {
+        setActive(true);
+      }, 2 * 60 * 1000);
     };
-    window.addEventListener("mousemove", resetTimer);
-    window.addEventListener("keydown", resetTimer);
-    window.addEventListener("mousedown", resetTimer);
-    window.addEventListener("touchstart", resetTimer);
+
+    const events = [
+      "mousemove",
+      "keydown",
+      "mousedown",
+      "touchstart",
+    ];
+
+    events.forEach((event) => {
+      window.addEventListener(event, resetTimer);
+    });
+
     resetTimer();
+    
     return () => {
-      window.removeEventListener("mousemove", resetTimer);
-      window.removeEventListener("keydown", resetTimer);
-      window.removeEventListener("mousedown", resetTimer);
-      window.removeEventListener("touchstart", resetTimer);
-      if (timerRef.current) clearTimeout(timerRef.current);
+      events.forEach((event) => {
+        window.removeEventListener(event, resetTimer);
+      });
+
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
     };
   }, []);
 
-  if (!active || images.length === 0) return null;
+  if (!active || images.length === 0) {
+    return null;
+  }
+
   return (
     <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        background: "rgba(0,0,0,0.95)",
-        zIndex: 9999,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-        cursor: "none",
-      }}
+      className="fixed inset-0 w-screen h-screen bg-black z-[9999] flex flex-col items-center justify-center cursor-none"
       onClick={() => setActive(false)}
     >
       <img
         src={images[current]}
         alt="Met Museum Art"
-        style={{
-          maxWidth: "80vw",
-          maxHeight: "100vh",
-          borderRadius: "8px",
-          boxShadow: "0 0 32px #000",
-          opacity: fade ? 1 : 0,
-          transition: "opacity 0.6s cubic-bezier(.4,0,.2,1)",
-        }}
+        className={`max-w-[80vw] max-h-screen rounded-lg shadow-2xl transition-opacity duration-600 ease-in-out ${fade ? 'opacity-100' : 'opacity-0'}`}
       />
-      <div style={{ color: "#fff", marginTop: 24, fontSize: 18 }}>
-        Screensaver: Met Museum Art (click or move to exit)
-      </div>
     </div>
   );
 }
