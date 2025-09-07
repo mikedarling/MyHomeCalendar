@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import "./globals.css";
 import AuthProvider from "@/context/oauth/AuthContext";
 import ScreensaverOverlay from "../components/shared/ScreensaverOverlay";
-import FlyoutMenu from "@/components/menu/FlyoutMenu";
+import FlyoutMenu from "@/components/shared/FlyoutMenu";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,7 +15,7 @@ export default function RootLayout({ header, children  }: { header: ReactNode, c
   return (
     <html lang="en">
       <body className={"antialiased"}>
-        <AuthProvider>
+        <AuthProvider value={false}>
           <header className="sticky top-0 z-50 p-2 bg-sky-600 text-white text-center text-sm">
             <div className="flex flex-row relative items-center justify-between w-full">
               <div className="absolute left-0">

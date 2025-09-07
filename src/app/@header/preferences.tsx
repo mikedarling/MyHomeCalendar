@@ -1,6 +1,6 @@
 'use client'
 
-import FlyoutMenu from "@/components/menu/FlyoutMenu";
+import FlyoutMenu from "@/components/shared/FlyoutMenu";
 import { useAuth } from "@/context/oauth/AuthContext";
 import { env } from "process";
 import { FC, useEffect, useState } from "react"

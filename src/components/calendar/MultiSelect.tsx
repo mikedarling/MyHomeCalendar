@@ -1,23 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
+import CalendarItem from "@/models/data/calendar/CalendarItem";
+import MultiSelectProps from "@/models/props/component/calendar/MultiSelectProps";
 
-interface CalendarItem {
-  id: string;
-  summary: string;
-}
-
-interface CalendarMultiSelectProps {
-  loggedIn: boolean;
-  selected: string[];
-  setSelected: (ids: string[]) => void;
-}
-
-const CalendarMultiSelect: React.FC<CalendarMultiSelectProps> = ({
-  loggedIn,
-  selected,
-  setSelected,
-}) => {
+const MultiSelect: FC<MultiSelectProps> = ({ loggedIn, selected, setSelected }) => {
   const [calendars, setCalendars] = useState<CalendarItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -127,4 +114,4 @@ const CalendarMultiSelect: React.FC<CalendarMultiSelectProps> = ({
   );
 };
 
-export default CalendarMultiSelect;
+export default MultiSelect;

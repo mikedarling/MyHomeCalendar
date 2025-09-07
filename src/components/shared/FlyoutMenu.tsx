@@ -4,7 +4,7 @@ import React, { FC, PropsWithChildren, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AuthButton from "@/components/oauth/AuthButton";
-import FlyoutMenuProps from "@/models/props/component/menu/FlyoutMenuProps";
+import FlyoutMenuProps from "@/models/props/component/shared/FlyoutMenuProps";
 
 const FlyoutMenu: FC<PropsWithChildren<FlyoutMenuProps>> = ({
   loggedIn,
@@ -66,7 +66,6 @@ const FlyoutMenu: FC<PropsWithChildren<FlyoutMenuProps>> = ({
           </div>
         )}
         {children}
-       
       </div>
       {/* Overlay */}
       {open && (

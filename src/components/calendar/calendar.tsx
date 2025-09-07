@@ -1,16 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, FC } from "react";
 import CalendarMonth from "./Month";
 import CalendarWeek from "./Week";
-import { AuthProvider } from "../../context/oauth/AuthContext";
-import { CalendarSelectionProvider } from "./CalendarSelectionContext";
+import AuthProvider from "@/context/oauth/AuthProivder";
+import CalendarProps from "@/models/props/component/calendar/CalendarProps";
+import CalendarProvider from "@/context/calendar/CalendarProvider";
+import Button from "../navigation/Button";
 
-interface CalendarProps {
-  selectedCalendars: string[];
-}
-
-const CalendarInner: React.FC<CalendarProps> = ({ selectedCalendars }) => {
+const Calendar: FC<CalendarProps> = ({ selectedCalendars }) => {
   const now = new Date();
   const [view, setView] = useState<"month" | "week">("week");
   const [selectedDate, setSelectedDate] = useState<Date>(now);
@@ -20,46 +18,26 @@ const CalendarInner: React.FC<CalendarProps> = ({ selectedCalendars }) => {
   };
 
   return (
-    <div style={{ position: "relative" }}>
-      <div style={{ marginBottom: "1em", marginLeft: 0 }}>
-        <button
-          onClick={() => setView("month")}
-          disabled={view === "month"}
-          aria-label="Month View"
-          style={{ marginRight: "0.5em" }}
-        >
-          Month View
-        </button>
-        <button
-          onClick={() => setView("week")}
-          disabled={view === "week"}
-          aria-label="Week View"
-        >
-          Week View
-        </button>
-      </div>
-      {view === "month" ? (
-        <CalendarMonth
-          selectedDate={selectedDate}
-          calendarIds={selectedCalendars}
-        />
-      ) : (
-        <CalendarWeek
-          selectedDate={selectedDate}
-          onDateSelected={handleDayClick}
-          calendarIds={selectedCalendars}
-        />
-      )}
-    </div>
+    <AuthProvider>
+      <CalendarProvider>
+        <div style={{ position: "relative" }}>
+          <div style={{ marginBottom: "1em", marginLeft: 0 }}>
+            <Button onClick={() => setView("month")} disabled={view === "month"} ariaLabel="Month View">
+              Month View
+            </Button>
+            <Button onClick={() => setView("week")} disabled={view === "week"} ariaLabel="Week View">
+              Week View
+            </Button>
+          </div>
+          {view === "month" ? (
+            <CalendarMonth selectedDate={selectedDate} calendarIds={selectedCalendars} />
+          ) : (
+            <CalendarWeek selectedDate={selectedDate} calendarIds={selectedCalendars} onDateSelected={handleDayClick} />
+          )}
+        </div>
+      </CalendarProvider>
+  </AuthProvider>
   );
 };
-
-const Calendar: React.FC<CalendarProps> = (props) => (
-  <AuthProvider>
-    <CalendarSelectionProvider>
-      <CalendarInner {...props} />
-    </CalendarSelectionProvider>
-  </AuthProvider>
-);
 
 export default Calendar;

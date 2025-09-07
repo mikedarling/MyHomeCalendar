@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
-import AuthContext from "@/context/oauth/AuthContext";
+import AuthContext from "./AuthContext";
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loggedIn, setLoggedIn] = useState(false);

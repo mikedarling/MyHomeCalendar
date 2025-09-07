@@ -1,40 +1,32 @@
 import { FC, useEffect, useState, useMemo } from "react";
-import CalendarEventBox from "./EventBox";
+import EventBox from "./EventBox";
 import dateUtils from "../../utils/dateUtils";
 import themeUtils from "../../utils/themeUtils";
 
-interface CalendarWeekProps {
-  calendarIds: string[];
-  selectedDate: Date;
-  onDateSelected: (date: Date) => void;
-}
+const Week: FC<WeekProps> = ({ calendarIds, selectedDate, onDateSelected }) => {
 
-// Only show 8:00 am (8) through 8:00 pm (20)
-const START_HOUR = 8;
-const END_HOUR = 20;
-const HALF_HOUR_BLOCKS = (END_HOUR - START_HOUR) * 2 + 1; // inclusive of 8:00pm
+  // Only show 8:00 am (8) through 8:00 pm (20)
+  const START_HOUR = 8;
+  const END_HOUR = 20;
+  const HALF_HOUR_BLOCKS = (END_HOUR - START_HOUR) * 2 + 1; // inclusive of 8:00pm
 
-function getStartOfWeek(date: Date) {
-  const day = date.getDay(); // 0 (Sun) - 6 (Sat)
-  const diff = date.getDate() - day;
-  return new Date(date.getFullYear(), date.getMonth(), diff);
-}
-
-// Helper to format time in 12-hour format with am/pm
-function formatTime(hour: number, minute: number) {
-  const ampm = hour >= 12 ? "pm" : "am";
-  let displayHour = hour % 12;
-  if (displayHour === 0) {
-    displayHour = 12;
+  function getStartOfWeek(date: Date) {
+    const day = date.getDay(); // 0 (Sun) - 6 (Sat)
+    const diff = date.getDate() - day;
+    return new Date(date.getFullYear(), date.getMonth(), diff);
   }
-  return `${displayHour}:${minute.toString().padStart(2, "0")} ${ampm}`;
-}
 
-const CalendarWeek: FC<CalendarWeekProps> = ({
-  calendarIds,
-  selectedDate,
-  onDateSelected,
-}) => {
+  // Helper to format time in 12-hour format with am/pm
+  function formatTime(hour: number, minute: number) {
+    const ampm = hour >= 12 ? "pm" : "am";
+    let displayHour = hour % 12;
+    if (displayHour === 0) {
+      displayHour = 12;
+    }
+    return `${displayHour}:${minute.toString().padStart(2, "0")} ${ampm}`;
+  }
+
+
   const [viewedDate, setViewedDate] = useState(selectedDate);
   const [events, setEvents] = useState<any[]>([]);
   const startOfWeek = useMemo(() => getStartOfWeek(viewedDate), [viewedDate]);
@@ -198,7 +190,7 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
                       const evClasses = ["absolute", "z-10"];
                       const overlaps = dateUtils.getOverlappingEvents(event, events);
                       return (
-                        <CalendarEventBox
+                        <EventBox
                           key={event.id}
                           event={event}
                           style={evStyle}
@@ -218,4 +210,4 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
   );
 };
 
-export default CalendarWeek;
+export default Week;

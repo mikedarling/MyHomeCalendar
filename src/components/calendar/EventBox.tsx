@@ -1,32 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import dateUtils from "../../utils/dateUtils";
-import locationUtils from "../../utils/locationUtils";
-import prefUtils from "../../utils/prefUtils";
+import { MouseEvent, FC, useEffect, useState } from "react";
+import dateUtils from "@/utils/dateUtils";
+import locationUtils from "@/utils/locationUtils";
+import prefUtils from "@/utils/prefUtils";
+import EventBoxProps from "@/models/props/component/calendar/EventBoxProps";
 
-interface CalendarEventBoxProps {
-  event: any;
-  style?: React.CSSProperties;
-  classes?: string[];
-  overlappingEvents: any[] | null;
-  onMouseEnter?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  onMouseLeave?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-}
 
-const EventBox: React.FC<CalendarEventBoxProps> = ({
+const EventBox: FC<EventBoxProps> = ({
   event,
   style,
   classes,
   overlappingEvents
 }) => {
   const [showModal, setShowModal] = useState(false);
-  const [modalPosition, setModalPosition] = useState<{
-    x: number;
-    y: number;
-    width: number;
-  } | null>(null);
+  const [modalPosition, setModalPosition] = useState<{ x: number; y: number; width: number } | null>(null);
 
   const MODAL_WIDTH = 260;
   const eventTimes = dateUtils.parseGoogleEvent(event);
@@ -89,7 +77,7 @@ const EventBox: React.FC<CalendarEventBoxProps> = ({
     };
   }, [showModal]);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
     // Close all other modals
     window.dispatchEvent(new Event("calendar-eventbox-close"));
     const rect = (e.target as HTMLElement).getBoundingClientRect();
@@ -158,4 +146,4 @@ const EventBox: React.FC<CalendarEventBoxProps> = ({
   );
 };
 
-export default CalendarEventBox;
+export default EventBox;
