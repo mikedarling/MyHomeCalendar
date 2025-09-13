@@ -4,7 +4,7 @@ import React, { FC, PropsWithChildren, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/oauth/AuthContext";
-import AuthButton from "../oauth/authbutton";
+import AuthButton from "@/components/oauth/AuthButton";
 
 const FlyoutMenu: FC<PropsWithChildren> = ({ children }) => {
   const [ open, setOpen ] = useState(false);
