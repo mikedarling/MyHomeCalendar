@@ -1,7 +1,7 @@
 'use client';
 
 import { FC } from "react";
-import CalendarMultiSelect from "@/components/calendar/MultiSelect";
+import CalendarSelector from "@/components/calendar/CalendarSelector";
 import { useAuth } from "@/context/oauth/AuthContext";
 
 const HomeFlyoutMenu: FC = () => {
@@ -10,11 +10,7 @@ const HomeFlyoutMenu: FC = () => {
   return (
     <>
       {loggedIn && (
-        <CalendarMultiSelect
-          loggedIn={loggedIn}
-          selected={selectedCalendars}
-          setSelected={setSelectedCalendars}
-        />
+        <CalendarSelector />
       )}
     </>
   );

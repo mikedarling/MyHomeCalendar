@@ -1,39 +1,50 @@
 "use client";
 
 import React, { useState, FC } from "react";
-import CalendarMonth from "./Month";
-import CalendarWeek from "./Week";
+import CalendarMonth from "@/components/calendar/Month";
+import CalendarWeek from "@/components/calendar/Week";
 import AuthProvider from "@/context/oauth/AuthProivder";
-import CalendarProps from "@/models/props/component/calendar/CalendarProps";
 import CalendarProvider from "@/context/calendar/CalendarProvider";
-import Button from "../navigation/Button";
+import CalButton from "@/components/navigation/Button";
+import MonthIcon from "@/components/media/MonthIcon";
+import WeekIcon from "@/components/media/WeekIcon";
+import StyleMap from "@/models/data/theme/StyleMap";
 
-const Calendar: FC<CalendarProps> = ({ selectedCalendars }) => {
-  const now = new Date();
+const Calendar: FC = () => {
   const [view, setView] = useState<"month" | "week">("week");
-  const [selectedDate, setSelectedDate] = useState<Date>(now);
 
-  const handleDayClick = (date: Date) => {
-    setSelectedDate(date);
-  };
+  const viewButtonClasses: StyleMap[] = [
+    { key: "px",
+      styles: [ {name: "default", value: "2"}]
+    }
+  ];
+
+  const monthButtonClasses: StyleMap[] = [
+    ...viewButtonClasses,
+    { key: "mb",
+      styles: [ {name: "default", value: "2"}]
+    }
+  ];
 
   return (
     <AuthProvider>
       <CalendarProvider>
-        <div style={{ position: "relative" }}>
-          <div style={{ marginBottom: "1em", marginLeft: 0 }}>
-            <Button onClick={() => setView("month")} disabled={view === "month"} ariaLabel="Month View">
-              Month View
-            </Button>
-            <Button onClick={() => setView("week")} disabled={view === "week"} ariaLabel="Week View">
-              Week View
-            </Button>
+        <div className="grid grid-cols-12">
+          <div className="col-span-1">
+            <CalButton classNames={monthButtonClasses} onClick={() => setView("month")} disabled={view === "month"} ariaLabel="Month View">
+              <MonthIcon height={40} width={40} />
+            </CalButton>
+            <CalButton classNames={viewButtonClasses} onClick={() => setView("week")} disabled={view === "week"} ariaLabel="Week View">
+              <WeekIcon height={40} width={40} />
+            </CalButton>
           </div>
-          {view === "month" ? (
-            <CalendarMonth selectedDate={selectedDate} calendarIds={selectedCalendars} />
-          ) : (
-            <CalendarWeek selectedDate={selectedDate} calendarIds={selectedCalendars} onDateSelected={handleDayClick} />
-          )}
+          <div className="col-span-11">
+            {view === "month" ? (
+              <CalendarMonth />
+            ) : (
+              <CalendarWeek />
+            )}
+          </div>
         </div>
       </CalendarProvider>
   </AuthProvider>

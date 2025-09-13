@@ -1,14 +1,20 @@
-import { FC, useEffect, useState, useMemo } from "react";
-import EventBox from "./EventBox";
-import dateUtils from "../../utils/dateUtils";
-import themeUtils from "../../utils/themeUtils";
+// TODO :: Refactor.
 
-const Week: FC<WeekProps> = ({ calendarIds, selectedDate, onDateSelected }) => {
+import { FC, useEffect, useState, useMemo } from "react";
+import EventBox from "@/components/calendar/EventBox";
+import dateUtils from "@/utils/dateUtils";
+import themeUtils from "@/utils/themeUtils";
+import { useCalendar } from "@/context/calendar/CalendarContext";
+import CalButton from "@/components/navigation/Button";
+
+const Week: FC = () => {
+  const { selectedCalendars, selectedDate, setSelectedDate } = useCalendar();
 
   // Only show 8:00 am (8) through 8:00 pm (20)
   const START_HOUR = 8;
   const END_HOUR = 20;
-  const HALF_HOUR_BLOCKS = (END_HOUR - START_HOUR) * 2 + 1; // inclusive of 8:00pm
+  const FIVE_MINUTE_BLOCKS = (END_HOUR - START_HOUR) * (60/5) + 1; // inclusive of 8:00pm
+  const FIVE_MINUTE_HEIGHT = 4; // Height in pixels for each 5-minute block
 
   function getStartOfWeek(date: Date) {
     const day = date.getDay(); // 0 (Sun) - 6 (Sat)
@@ -26,7 +32,6 @@ const Week: FC<WeekProps> = ({ calendarIds, selectedDate, onDateSelected }) => {
     return `${displayHour}:${minute.toString().padStart(2, "0")} ${ampm}`;
   }
 
-
   const [viewedDate, setViewedDate] = useState(selectedDate);
   const [events, setEvents] = useState<any[]>([]);
   const startOfWeek = useMemo(() => getStartOfWeek(viewedDate), [viewedDate]);
@@ -36,16 +41,16 @@ const Week: FC<WeekProps> = ({ calendarIds, selectedDate, onDateSelected }) => {
     return d;
   });
 
-  // Create half-hour slots from 8:00 am to 8:00 pm
-  const timeSlots = Array.from({ length: HALF_HOUR_BLOCKS }, (_, i) => {
-    const hour = START_HOUR + Math.floor(i / 2);
-    const minute = i % 2 === 0 ? 0 : 30;
+  // Create five-minute slots from 8:00 am to 8:00 pm
+  const timeSlots = Array.from({ length: FIVE_MINUTE_BLOCKS }, (_, i) => {
+    const hour = START_HOUR + Math.floor(i / 12);
+    const minute = (i % 12) * 5;
     return { hour, minute, label: formatTime(hour, minute) };
   });
 
   // Fetch events for the displayed week and selected calendars
   useEffect(() => {
-    if (!calendarIds || calendarIds.length === 0) {
+    if (!selectedCalendars || selectedCalendars.length === 0) {
       setEvents([]);
       return;
     }
@@ -54,7 +59,7 @@ const Week: FC<WeekProps> = ({ calendarIds, selectedDate, onDateSelected }) => {
     end.setDate(end.getDate() + 6);
     end.setHours(23, 59, 59, 999);
     const params = new URLSearchParams({
-      calendarIds: calendarIds.join(","),
+      calendarIds: selectedCalendars.join(","),
       timeMin: start.toISOString(),
       timeMax: end.toISOString(),
     });
@@ -68,7 +73,7 @@ const Week: FC<WeekProps> = ({ calendarIds, selectedDate, onDateSelected }) => {
       }
     };
     fetchEvents();
-  }, [calendarIds, startOfWeek]);
+  }, [selectedCalendars, startOfWeek]);
 
   // Helper to get events for a given day
   function getEventsForDay(day: Date) {
@@ -87,33 +92,26 @@ const Week: FC<WeekProps> = ({ calendarIds, selectedDate, onDateSelected }) => {
     const prev = new Date(startOfWeek);
     prev.setDate(prev.getDate() - 7);
     setViewedDate(prev);
-    onDateSelected(prev);
   };
+
   const handleNextWeek = () => {
     const next = new Date(startOfWeek);
     next.setDate(next.getDate() + 7);
     setViewedDate(next);
-    onDateSelected(next);
   };
 
   return (
     <div>
       <div className="mb-2 flex justify-between items-center">
-        <button
-          className="px-3 py-1 rounded bg-blue-500 text-white border-none font-medium cursor-pointer"
-          onClick={handlePrevWeek}
-        >
+        <CalButton onClick={handlePrevWeek}>
           Prev
-        </button>
-        <span className="font-medium">
+        </CalButton>
+        <h3 className="font-medium">
           Week of {startOfWeek.toLocaleDateString()}
-        </span>
-        <button
-          className="px-3 py-1 rounded bg-blue-500 text-white border-none font-medium cursor-pointer"
-          onClick={handleNextWeek}
-        >
+        </h3>
+        <CalButton onClick={handleNextWeek}>
           Next
-        </button>
+        </CalButton>
       </div>
       {/* Header Row for Dates */}
       <div className="flex ml-[70px] mb-0">
@@ -131,14 +129,16 @@ const Week: FC<WeekProps> = ({ calendarIds, selectedDate, onDateSelected }) => {
       <div className="flex border border-gray-300 min-h-[600px]">
         {/* Time column */}
         <div className="w-[70px] border-r border-gray-200 bg-gray-50 flex flex-col">
-          {timeSlots.map((slot, slotIdx) => (
-            <div
-              key={slotIdx}
-              className="h-6 text-[11px] text-gray-500 flex items-center justify-center text-center pr-0"
-            >
-              {slot.label}
-            </div>
-          ))}
+          {timeSlots
+            .filter(slot => slot.minute === 0 || slot.minute === 30)
+            .map((slot, slotIdx) => (
+              <div data-hour={slot.hour} data-minute={slot.minute}
+                key={slotIdx}
+                className="h-6 text-[11px] text-gray-500 flex items-center justify-center text-center pr-0"
+              >
+                {slot.label}
+              </div>
+            ))}
         </div>
         {/* Days columns */}
         {days.map((date, dateIdx) => {
@@ -167,23 +167,22 @@ const Week: FC<WeekProps> = ({ calendarIds, selectedDate, onDateSelected }) => {
                   <div
                     key={slotIdx}
                     className={
-                      "h-6 border-b border-gray-100 cursor-pointer relative overflow-visible " +
+                      "h-1 cursor-pointer relative overflow-visible" +
                       (date.toDateString() === viewedDate.toDateString() &&
                       slot.label === "9:00 am"
-                        ? "bg-blue-50"
-                        : "")
+                        ? " bg-blue-50"
+                        : "") + (slot.minute % 30 == 0 ? " border-t border-gray-100" : "")
                     }
                     onClick={() => {
                       const slotDate = new Date(date);
                       slotDate.setHours(slot.hour, slot.minute, 0, 0);
                       setViewedDate(slotDate);
-                      onDateSelected(slotDate);
                     }}
                   >
                     {slotEvents.map((event) => {
                       // Calculate how many slots this event should span (precise, including partial slots)
                       const eventDuration = dateUtils.getEventDuration(event);
-                      const height = (eventDuration / 30) * 24; // 24px per half-hour
+                      const height = (eventDuration / 5) * 4; // 4px per 5-minute slot
                       const evStyle = {
                         height: `${height}px`
                       };

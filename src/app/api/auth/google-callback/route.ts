@@ -35,8 +35,6 @@ export async function GET(req: NextRequest) {
       `google_user=${encodeURIComponent(JSON.stringify(userInfo.data))}; Path=/; SameSite=Lax; Domain=${host}`,
     ];
 
-    console.log("Set-Cookie headers:", cookieHeaders);
-
     // Redirect to home page after successful login, with cookies set
     const response = NextResponse.redirect(baseUri);
     cookieHeaders.forEach((header) =>

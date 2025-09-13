@@ -1,13 +1,18 @@
+// TODO :: Refactor.
+
 "use client"
 
 import React, { FC, useEffect, useState } from "react";
 import EventBox from "./EventBox";
+import CalButton from "@/components/navigation/Button";
 
 import dateUtils, { CalendarDate } from "@/utils/dateUtils"
 import themeUtils from "@/utils/themeUtils";
-import MonthProps from "@/models/props/component/calendar/MonthProps";
+import { useCalendar } from "@/context/calendar/CalendarContext";
 
-const Month: FC<MonthProps> = ({ selectedDate, calendarIds }) => {
+const Month: FC = () => {
+  const { selectedCalendars, selectedDate } = useCalendar();
+
   const [events, setEvents] = useState<any[]>([]);
 
   // Helper functions
@@ -46,7 +51,7 @@ const Month: FC<MonthProps> = ({ selectedDate, calendarIds }) => {
 
   // Fetch events for the displayed month and selected calendars
   useEffect(() => {
-    if (!calendarIds || calendarIds.length === 0) {
+    if (!selectedCalendars || selectedCalendars.length === 0) {
       setEvents([]);
       return;
     }
@@ -57,7 +62,7 @@ const Month: FC<MonthProps> = ({ selectedDate, calendarIds }) => {
       const start = new Date(year, month, 1);
       const end = new Date(year, month + 1, 0, 23, 59, 59);
       const params = new URLSearchParams({
-        calendarIds: calendarIds.join(","),
+        calendarIds: selectedCalendars.join(","),
         timeMin: start.toISOString(),
         timeMax: end.toISOString(),
       });
@@ -71,7 +76,7 @@ const Month: FC<MonthProps> = ({ selectedDate, calendarIds }) => {
       }
     };
     fetchEvents();
-  }, [calendarIds, displayedMonth, displayedYear]);
+  }, [selectedCalendars, displayedMonth, displayedYear]);
 
   const handlePrev = () => {
     if (displayedMonth != 0) {
@@ -98,18 +103,12 @@ const Month: FC<MonthProps> = ({ selectedDate, calendarIds }) => {
 
   return (
     <>
-      <div className="text-center">
-        <h3>
+      <div className="mb-2 flex justify-between items-center">
+        <CalButton onClick={handlePrev}>Prev</CalButton>
+        <h3 className="font-medium">
           {monthLabel}
         </h3>
-      </div>
-      <div className="flex justify-between py-2">
-        <button className="px-3 py-2 rounded
-          bg-blue-600 text-gray-100 border-transparent border-2
-          hover:bg-transparent hover:text-blue-600 hover:border-blue-600" onClick={handlePrev}>Prev</button>
-        <button className="px-3 py-2 rounded
-          bg-blue-600 text-gray-100 border-transparent border-2
-          hover:bg-transparent hover:text-blue-600 hover:border-blue-600" onClick={handleNext}>Next</button>
+        <CalButton onClick={handleNext}>Next</CalButton>
       </div>
       {/* Calendar Wrapper */}
       <div className="w-full">

@@ -68,7 +68,7 @@ export default function ScreensaverOverlay() {
 
       timerRef.current = setTimeout(() => {
         setActive(true);
-      }, 2 * 60 * 1000);
+      }, 2 * 60 * 1000); // 2 minutes
     };
 
     const events = [
