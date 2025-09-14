@@ -1,0 +1,44 @@
+# Node
+node_modules/
+.env
+.next/
+dist/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build
+out/
+
+# Misc
+coverage/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# Mac
+Icon?
+
+# VSCode
+.history/
+
+# Test
+coverage/
+
+# Others
+*.tgz
+
+
+certificates
