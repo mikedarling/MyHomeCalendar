@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 export default function ScreensaverOverlay() {
   const [active, setActive] = useState(false);
@@ -104,10 +105,15 @@ export default function ScreensaverOverlay() {
       className="fixed inset-0 w-screen h-screen bg-black z-[9999] flex flex-col items-center justify-center cursor-none"
       onClick={() => setActive(false)}
     >
-      <img
+      <Image
         src={images[current]}
         alt="Met Museum Art"
+        width={1200}
+        height={800}
         className={`max-w-[80vw] max-h-screen rounded-lg shadow-2xl transition-opacity duration-600 ease-in-out ${fade ? 'opacity-100' : 'opacity-0'}`}
+        style={{ objectFit: "contain" }}
+        priority
+        unoptimized
       />
     </div>
   );

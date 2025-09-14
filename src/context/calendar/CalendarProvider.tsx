@@ -22,10 +22,6 @@ const CalendarProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (prevSelectedCalendars.current !== null) {
-      console.log("Prev selectedCalendars:", prevSelectedCalendars.current);
-      console.log("Updated selectedCalendars:", selectedCalendars);
-    }
     prevSelectedCalendars.current = selectedCalendars;
   }, [selectedCalendars]);
 

@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    httpUtils.gAuthRedirectUri,
+    httpUtils.gAuthRedirectUri(req.url),
   );
   oauth2Client.setCredentials(tokens);
 

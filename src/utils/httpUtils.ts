@@ -7,7 +7,7 @@ export type UrlParts = {
 const parts = (url: string) : UrlParts => {
   const parsedUrl = new URL(url);
 
-  let p: UrlParts = {
+  const p: UrlParts = {
     scheme: parsedUrl.protocol.replace(":", ""),
     host: parsedUrl.hostname,
     port: null,

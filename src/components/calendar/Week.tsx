@@ -9,13 +9,13 @@ import CalButton from "@/components/navigation/Button";
 import StyleMap from "@/models/data/theme/StyleMap";
 
 const Week: FC = () => {
-  const { selectedCalendars, selectedDate, setSelectedDate } = useCalendar();
+  const { selectedCalendars, selectedDate } = useCalendar();
 
   // Only show 8:00 am (8) through 8:00 pm (20)
   const START_HOUR = 8;
   const END_HOUR = 20;
   const FIVE_MINUTE_BLOCKS = (END_HOUR - START_HOUR) * (60/5) + 1; // inclusive of 8:00pm
-  const FIVE_MINUTE_HEIGHT = 4; // Height in pixels for each 5-minute block
+  //const FIVE_MINUTE_HEIGHT = 4; // Height in pixels for each 5-minute block
 
   const CALENDAR_NAV_BUTTON_CLASSES: StyleMap[] = [
     { key: "px",
