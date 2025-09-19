@@ -173,11 +173,7 @@ const Week: FC = () => {
                   <div
                     key={slotIdx}
                     className={
-                      "h-1 cursor-pointer relative overflow-visible" +
-                      (date.toDateString() === viewedDate.toDateString() &&
-                      slot.label === "9:00 am"
-                        ? " bg-blue-50"
-                        : "") + (slot.minute % 30 == 0 ? " border-t border-gray-100" : "")
+                      "h-1 cursor-pointer relative overflow-visible"
                     }
                     onClick={() => {
                       const slotDate = new Date(date);
@@ -192,7 +188,7 @@ const Week: FC = () => {
                       const evStyle = {
                         height: `${height}px`
                       };
-                      const evClasses = ["absolute", "z-10"];
+                      const evClasses = ["absolute", "z-10", "mt-[2px]"];
                       const overlaps = dateUtils.getOverlappingEvents(event, events);
                       return (
                         <EventBox

@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@source inline("{disabled:,}bg-blue-200");
+@source inline("w-12");
+
 
 :root {
   --background: #ffffff;

@@ -1,3 +1,4 @@
+// TODO :: Refactor.
 "use client";
 
 import { MouseEvent, FC, useEffect, useState } from "react";
@@ -5,7 +6,6 @@ import dateUtils from "@/utils/dateUtils";
 import locationUtils from "@/utils/locationUtils";
 import prefUtils from "@/utils/prefUtils";
 import EventBoxProps from "@/models/props/component/calendar/EventBoxProps";
-
 
 const EventBox: FC<EventBoxProps> = ({
   event,
@@ -26,7 +26,7 @@ const EventBox: FC<EventBoxProps> = ({
     return prefUtils.getCalendarColor(window, organizer);
   };
 
-  let boxClasses = "cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis py-1 px-2 m-0 text-xs rounded";
+  let boxClasses = "cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis py-1 px-2 ml-[2px] text-xs rounded";
   if (classes) {
     boxClasses += " " + classes.join(" ");
   }
@@ -41,15 +41,13 @@ const EventBox: FC<EventBoxProps> = ({
 
   const boxStyles = (style || {});
   boxStyles['background'] = getBackground(event.organizer.displayName);
-  if (overlappingEvents && overlappingEvents.length > 0) {
-    boxStyles['width'] = `${100.0 / (overlappingEvents.length) - 2}%`;
-    overlappingEvents.push(event);
-    const sortedEvents = overlappingEvents.sort((a, b) => {
-      return a.id > b.id ? 1 : -1;
-    });
 
-    const offset = sortedEvents.findIndex((e) => e.id === event.id);
-    boxStyles['left'] = (offset * (100.0 / (overlappingEvents.length - 1))) + "%";
+  if (overlappingEvents && overlappingEvents.length > 1) {
+    const width = 100.0 / (overlappingEvents.length) - 2.0;
+    boxStyles['width'] = `${width}%`;
+
+    const offset = overlappingEvents.findIndex((e) => e.id === event.id);
+    boxStyles['left'] = (offset * width) + "%";
   } else {
     boxStyles['width'] = "98%";
   }

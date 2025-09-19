@@ -16,22 +16,19 @@ const Calendar: FC = () => {
   const viewButtonClasses: StyleMap[] = [
     { key: "p",
       styles: [ {name: "default", value: "1"}]
-    }
-  ];
-
-  const monthButtonClasses: StyleMap[] = [
-    ...viewButtonClasses,
-    { key: "mb",
-      styles: [ {name: "default", value: "2"}]
-    }
+    },
+    { key: "w",
+      styles: [ {name: "default", value: "12"}]
+    },
+  
   ];
 
   return (
     <AuthProvider>
       <CalendarProvider>
         <div className="grid grid-cols-12">
-          <div className="col-span-1">
-            <CalButton classNames={monthButtonClasses} onClick={() => setView("month")} disabled={view === "month"} ariaLabel="Month View">
+          <div className="col-span-1 flex flex-col items-end pr-5 gap-2">
+            <CalButton classNames={viewButtonClasses} onClick={() => setView("month")} disabled={view === "month"} ariaLabel="Month View">
               <MonthIcon height={40} width={40} />
             </CalButton>
             <CalButton classNames={viewButtonClasses} onClick={() => setView("week")} disabled={view === "week"} ariaLabel="Week View">
