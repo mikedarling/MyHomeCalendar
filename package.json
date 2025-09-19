@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack --experimental-https",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "app": "next build --turbopack && next start"
   },
   "dependencies": {
     "autoprefixer": "^10.4.21",

@@ -132,7 +132,7 @@ const Month: FC = () => {
         <div className="grid grid-cols-7 gap-[2px] mt-1">
           {days.map((date, idx) => ( date.dayOfWeek < 0
             ? <div key={idx}></div>
-            : <div key={idx} className="h-30 p-1 border box-border overflow-hidden" data-date={date.monthDay}>
+            : <div key={idx} className="h-34 p-1 border box-border overflow-hidden" data-date={date.monthDay}>
                 <div className="text-right">
                   {date.monthDay?.getDate()}
                 </div>

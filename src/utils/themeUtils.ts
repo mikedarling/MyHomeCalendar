@@ -8,21 +8,6 @@ export const BUTTON_PRIMARY = "bg-blue-600 text-white hover:bg-blue-700";
 export const BUTTON_SECONDARY = "bg-blue-500 text-white";
 export const BUTTON_DISABLED = "bg-blue-200 text-gray-400 cursor-not-allowed";
 
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-const menuOpen = `
-  bg-white
-  text-gray-800
-  border-none
-  rounded
-  shadow-md
-  p-2
-  cursor-pointer
-  flex
-  items-center
-  justify-center
-  min-w-[40px]
-  min-h-[40px]`;
-
 const DEFAULT_BUTTON_STYLE_MAPS: StyleMap[] = [
   {
     key : "text",

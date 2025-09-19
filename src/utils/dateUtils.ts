@@ -123,14 +123,24 @@ const getEventDuration = (event: any): number => {
 }
 
 const getOverlappingEvents = (event: any, events: any[]): any[] | null => {
-  return events
-    .filter((e) => { return doesOverlap(event, e); })
+  const overlaps = events.filter((e) => { return doesOverlap(event, e); });
+  if (event.summary == "Liv - Hip-Hop") {
+    console.log(`[dateUtils.getOverlappingEvents] ${event.summary} overlaps with ${overlaps.length} events.`);
+  }
+
+  if (overlaps.length === 0) {
+    return null;
+  }
+
+  return overlaps// events
+    //.filter((e) => { return doesOverlap(event, e); })
     .sort((a, b) => { return a.id.localeCompare(b.id, undefined, { numeric: true }); });
 };
 
 const doesOverlap = (thisEvent: any, otherEvent: any): boolean =>{
-  if (thisEvent.id === otherEvent.id) {
-    return false;
+  if (thisEvent.id == otherEvent.id) {
+    // For the sake of displaying them in sorted order, consider an event to overlap with itself.
+    return true;
   }
 
   const thisEventTimes = parseGoogleEvent(thisEvent);
@@ -143,12 +153,15 @@ const doesOverlap = (thisEvent: any, otherEvent: any): boolean =>{
     return false;
   }
 
-  return (
-    (thisEventTimes.start >= otherEventTimes.start &&
-      thisEventTimes.start < otherEventTimes.end) ||
-      (thisEventTimes.end > otherEventTimes.start &&
-        thisEventTimes.end <= otherEventTimes.end)
-    );
+  if (thisEventTimes.start >= otherEventTimes.end) {
+    return false;
+  }
+
+  if (thisEventTimes.end <= otherEventTimes.start) {
+    return false;
+  }
+
+  return true;
 }
 
 export default {
